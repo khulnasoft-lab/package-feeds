@@ -9,7 +9,7 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/xeipuuv/gojsonschema v1.2.0
-	gocloud.dev v0.33.0
+	gocloud.dev v0.34.0
 	gocloud.dev/pubsub/kafkapubsub v0.33.0
 	gopkg.in/yaml.v3 v3.0.1
 )
