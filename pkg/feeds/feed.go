@@ -6,7 +6,11 @@ import (
 	"time"
 )
 
-const schemaVer = "1.1"
+const (
+	schemaVer = "1.1"
+
+	DefaultUserAgent = "package-feeds (github.com/khulnasoft-lab/package-feeds)"
+)
 
 var ErrNoPackagesPolled = errors.New("no packages were successfully polled")
 

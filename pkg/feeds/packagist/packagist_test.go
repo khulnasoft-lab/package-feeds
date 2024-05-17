@@ -95,8 +95,8 @@ func changesMock(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	_, err := w.Write([]byte(`{"actions":[{"type":"delete","package":"to-delete/deleted-package",
-	"time":1614513806},{"type":"update","package":"khulnasoft-lab/package","time":1614514502},
-	{"type":"update","package":"khulnasoft-lab/package~dev","time":1614514502}],"timestamp":16145145025048}`))
+	"time":1614513806},{"type":"update","package":"ossf/package","time":1614514502},
+	{"type":"update","package":"ossf/package~dev","time":1614514502}],"timestamp":16145145025048}`))
 	if err != nil {
 		http.Error(w, testutils.UnexpectedWriteError(err), http.StatusInternalServerError)
 	}
@@ -104,13 +104,13 @@ func changesMock(w http.ResponseWriter, r *http.Request) {
 
 func versionMock(w http.ResponseWriter, r *http.Request) {
 	m := map[string]string{
-		"/p2/khulnasoft-lab/package.json": `{"packages":{"khulnasoft-lab/package":[{"name":"khulnasoft-lab/package",
+		"/p2/ossf/package.json": `{"packages":{"ossf/package":[{"name":"ossf/package",
 		"description":"Lorem Ipsum","keywords":["Lorem Ipsum 1","Lorem Ipsum 2"],"homepage":"",
 		"version":"v1.0.0","version_normalized":"1.0.0.0","license":["MIT"],
 		"authors":[{"name":"John Doe","email":"john.doe@local"}],
 		"source":{"type":"git","url":"https://github.com/khulnasoft-lab/package.git","reference":
 		"c3afaa087afb42bfaf40fc3cda1252cd9a653d7f"},"dist":{"type":"zip","url":
-		"https://api.github.com/repos/khulnasoft-lab/package/zipball/c3afaa087afb42bfaf40fc3cda1252cd9a653d7f",
+		"https://api.github.com/repos/ossf/package/zipball/c3afaa087afb42bfaf40fc3cda1252cd9a653d7f",
 		"reference":"c3afaa087afb42bfaf40fc3cda1252cd9a653d7f","shasum":""},"type":"library",
 		"time":"2021-02-28T12:20:03+00:00","autoload":{"psr-4":{"package\\":"src/"}},
 		"require":{"php":"^8.0","guzzlehttp/guzzle":"^7.2"},
@@ -118,13 +118,13 @@ func versionMock(w http.ResponseWriter, r *http.Request) {
 		"codeception/module-asserts":"^1.0.0","hoa/console":"^3.17"},
 		"support":{"issues":"https://github.com/khulnasoft-lab/package/issues",
 		"source":"https://github.com/khulnasoft-lab/package/tree/v1.0.0"}}]},"minified":"composer/2.0"}`,
-		"/p2/khulnasoft-lab/package~dev.json": `{"packages":{"khulnasoft-lab/package":[{"name":"khulnasoft-lab/package",
+		"/p2/ossf/package~dev.json": `{"packages":{"ossf/package":[{"name":"ossf/package",
 		"description":"Lorem Ipsum","keywords":["Lorem Ipsum 1","Lorem Ipsum 2"],"homepage":"",
 		"version":"dev-master","version_normalized":"dev-master","license":["MIT"],
 		"authors":[{"name":"John Doe","email":"john.doe@local"}],
 		"source":{"type":"git","url":"https://github.com/khulnasoft-lab/package.git","reference":
 		"c3afaa087afb42bfaf40fc3cda1252cd9a653d7f"},"dist":{"type":"zip","url":
-		"https://api.github.com/repos/khulnasoft-lab/package/zipball/c3afaa087afb42bfaf40fc3cda1252cd9a653d7f",
+		"https://api.github.com/repos/ossf/package/zipball/c3afaa087afb42bfaf40fc3cda1252cd9a653d7f",
 		"reference":"c3afaa087afb42bfaf40fc3cda1252cd9a653d7f","shasum":""},"type":"library",
 		"time":"2021-02-28T12:20:03+00:00","autoload":{"psr-4":{"package\\":"src/"}},
 		"default-branch":true,"require":{"php":"^8.0","guzzlehttp/guzzle":"^7.2"},

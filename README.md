@@ -45,3 +45,55 @@ poll_rate: 5m
 
 timer: false
 ```
+
+`poll_rate` string formatted for [duration parser](https://golang.org/pkg/time/#ParseDuration).This is used as an initial value to generate a cutoff point for feed events relative to the given time at execution, with subsequent events using the previous time at execution as the cutoff point.
+`timer` will configure interal polling of the `feeds` at the given `poll_rate` period, individual feeds configured with a `poll_rate` will poll on an interval regardless of these options. To specify this configuration file, define its path in your environment under the `PACKAGE_FEEDS_CONFIG_PATH` variable.
+
+An event handler can be configured through the `events` field, this is documented in the [events README](./pkg/events/README.md).
+
+## FeedOptions
+
+Feeds can be configured with additional options, not all feeds will support these features. Check [feeds/README.md](./pkg/feeds/README.md) for more information on feed specific configurations.
+
+Below is an example of such options with pypi being configured to poll a specific set of packages
+
+```
+feeds:
+- type: pypi
+  options:
+    packages:
+    - fooPackage
+    - barPackage
+```
+
+## Legacy Configuration
+
+Legacy configuration methods are still supported. By default, without a configuration file all feeds will be enabled. The environment variable `OSSMALWARE_TOPIC_URL` can be used to select the GCP pubsub publisher and `PORT` will configure the port for the HTTP server.
+The default `poll_rate` is 5 minutes, it is assumed that an external service is dispatching requests to the configured HTTP server at this frequency.
+
+# Running Locally
+
+To start an instance of `package-feeds` running on a local machine, run the
+following commands:
+
+```shell
+$ docker build . -t local-package-feeds        ## Build the container
+$ mkdir /tmp/feedconfig/                       ## Create the feeds.yml config
+$ cat << EOF >> /tmp/feedconfig/feeds.yml
+publisher:
+  type: stdout
+poll_rate: 5m
+http_port: 8080
+EOF
+$ docker run -v /tmp/feedconfig:/config/ \
+  -e "PACKAGE_FEEDS_CONFIG_PATH=/config/feeds.yml" \
+  -p 8080:8080 --rm -ti local-package-feeds    ## Start the container
+```
+
+# Contributing
+
+If you want to get involved or have ideas you'd like to chat about, we discuss this project in the [OSSF Securing Critical Projects Working Group](https://github.com/khulnasoft-lab/wg-securing-critical-projects) meetings.
+
+See the [Community Calendar](https://calendar.google.com/calendar?cid=czYzdm9lZmhwNWk5cGZsdGI1cTY3bmdwZXNAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ) for the schedule and meeting invitations.
+
+PRs are linted using `golangci-lint` with the following [config file](./.golangci.yml). If you wish to run this locally, see the [install docs](https://golangci-lint.run/usage/install/#local-installation).

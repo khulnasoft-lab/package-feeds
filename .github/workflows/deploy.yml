@@ -1,0 +1,64 @@
+name: 'Deploy with Terraform'
+
+on: workflow_dispatch
+
+permissions: read-all
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@633666f66e0061ca3b725c73b2ec20cd13a8fdd1
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@35b0e87d162680511bf346c299f71c9c5c379033 # v1.1.1
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        credentials_json: ${{ secrets.TF_GOOGLE_CREDENTIALS }}
+        export_environment_variables: true
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@e30db14379863a8c79331b04a9969f4c1e225e0b # v1.1.1
+
+    - name: Configure gcloud
+      run: gcloud config set project ${{ secrets.GOOGLE_PROJECT_ID }}
+
+    - name: Generate the images for each feed
+      run: gcloud builds submit --tag gcr.io/${{ secrets.GOOGLE_PROJECT_ID }}/scheduled-feeds
+
+    - name: Terraform Init
+      run: terraform init
+      working-directory: ./terraform
+
+    - name: Terraform Format
+      run: terraform fmt -check
+      working-directory: ./terraform
+
+    - name: Terraform Plan
+      run: terraform plan
+      working-directory: ./terraform
+
+    - name: Terraform Apply
+      if: github.ref == 'refs/heads/main'
+      run: terraform apply -auto-approve
+      working-directory: ./terraform
+
+    - name: Deploy to Cloud Run
+      if: github.ref == 'refs/heads/main'
+      run: |
+        gcloud run deploy \
+          scheduled-feeds-srv \
+          --platform managed \
+          --region us-central1 \
+          --max-instances=1 \
+          --image gcr.io/${{ secrets.GOOGLE_PROJECT_ID }}/scheduled-feeds;

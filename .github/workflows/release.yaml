@@ -50,7 +50,7 @@ jobs:
             org.opencontainers.image.source=${{ github.repositoryUrl }}
             org.opencontainers.image.description="This is a container for the Package Feeds process"
             org.opencontainers.image.title="Package Feeds"
-            org.opencontainers.image.vendor="khulnasoft-lab"
+            org.opencontainers.image.vendor="OpenSSF"
             org.opencontainers.image.version=${{ github.sha }}
           flavor: |
             latest=auto
