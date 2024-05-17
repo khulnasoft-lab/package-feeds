@@ -11,6 +11,7 @@ import (
 
 	"github.com/khulnasoft-lab/package-feeds/pkg/events"
 	"github.com/khulnasoft-lab/package-feeds/pkg/feeds"
+	"github.com/khulnasoft-lab/package-feeds/pkg/useragent"
 	"github.com/khulnasoft-lab/package-feeds/pkg/utils"
 )
 
@@ -22,7 +23,8 @@ const (
 
 var (
 	httpClient = &http.Client{
-		Timeout: 10 * time.Second,
+		Transport: &useragent.RoundTripper{UserAgent: feeds.DefaultUserAgent},
+		Timeout:   10 * time.Second,
 	}
 	errInvalidLinkForPackage = errors.New("invalid link provided by pypi API")
 )

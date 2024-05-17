@@ -152,6 +152,16 @@ func (pc PublisherConfig) ToPublisher(ctx context.Context) (publisher.Publisher,
 			return nil, fmt.Errorf("failed to decode kafkapubsub config: %w", err)
 		}
 		return kafkapubsub.FromConfig(ctx, kafkaConfig)
+		
+	case httpclientpubsub.PublisherType:
+		var httpClientConfig httpclientpubsub.Config
+		err = strictDecode(pc.Config, &httpClientConfig)
+		if err != nil {
+			return nil, fmt.Errorf("failed to decode httpclient config: %w", err)
+		}
+		return httpclientpubsub.FromConfig(ctx, httpClientConfig)
+
+
 	case stdout.PublisherType:
 		return stdout.New(), nil
 	default:
