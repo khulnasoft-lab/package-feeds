@@ -17,6 +17,7 @@ import (
 	"github.com/khulnasoft-lab/package-feeds/pkg/feeds"
 	"github.com/khulnasoft-lab/package-feeds/pkg/feeds/crates"
 	"github.com/khulnasoft-lab/package-feeds/pkg/feeds/goproxy"
+	"github.com/khulnasoft-lab/package-feeds/pkg/feeds/maven"
 	"github.com/khulnasoft-lab/package-feeds/pkg/feeds/npm"
 	"github.com/khulnasoft-lab/package-feeds/pkg/feeds/nuget"
 	"github.com/khulnasoft-lab/package-feeds/pkg/feeds/packagist"
@@ -24,6 +25,7 @@ import (
 	"github.com/khulnasoft-lab/package-feeds/pkg/feeds/rubygems"
 	"github.com/khulnasoft-lab/package-feeds/pkg/publisher"
 	"github.com/khulnasoft-lab/package-feeds/pkg/publisher/gcppubsub"
+	"github.com/khulnasoft-lab/package-feeds/pkg/publisher/httpclientpubsub"
 	"github.com/khulnasoft-lab/package-feeds/pkg/publisher/kafkapubsub"
 	"github.com/khulnasoft-lab/package-feeds/pkg/publisher/stdout"
 )
@@ -152,6 +154,14 @@ func (pc PublisherConfig) ToPublisher(ctx context.Context) (publisher.Publisher,
 			return nil, fmt.Errorf("failed to decode kafkapubsub config: %w", err)
 		}
 		return kafkapubsub.FromConfig(ctx, kafkaConfig)
+	case httpclientpubsub.PublisherType:
+		var httpClientConfig httpclientpubsub.Config
+		err = strictDecode(pc.Config, &httpClientConfig)
+		if err != nil {
+			return nil, fmt.Errorf("failed to decode httpclient config: %w", err)
+		}
+		return httpclientpubsub.FromConfig(ctx, httpClientConfig)
+
 	case stdout.PublisherType:
 		return stdout.New(), nil
 	default:
@@ -171,6 +181,8 @@ func (fc FeedConfig) ToFeed(eventHandler *events.Handler) (feeds.ScheduledFeed, 
 		return npm.New(fc.Options, eventHandler)
 	case nuget.FeedName:
 		return nuget.New(fc.Options)
+	case maven.FeedName:
+		return maven.New(fc.Options)
 	case pypi.FeedName:
 		return pypi.New(fc.Options, eventHandler)
 	case packagist.FeedName:
@@ -212,6 +224,10 @@ func Default() *ScheduledFeedConfig {
 			},
 			{
 				Type:    nuget.FeedName,
+				Options: defaultFeedOptions,
+			},
+			{
+				Type:    maven.FeedName,
 				Options: defaultFeedOptions,
 			},
 			{
