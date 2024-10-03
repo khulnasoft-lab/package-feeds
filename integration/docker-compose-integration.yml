@@ -10,7 +10,7 @@ services:
       ZOOKEEPER_SYNC_LIMIT: 2
 
   kafka:
-    image: confluentinc/cp-kafka@sha256:0bae779102557a9e117b5f6729cba4e8b6d49b76eddad956d4e2e1223ecf64a3
+    image: confluentinc/cp-kafka@sha256:a21737d09496a8b9bb38b995ab021e94e952259a5a2756ee22cef1cc84f5d9fe
     ports:
       - 9094:9094
     depends_on:
