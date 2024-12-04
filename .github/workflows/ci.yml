@@ -8,69 +8,68 @@ jobs:
   terraform-check:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@633666f66e0061ca3b725c73b2ec20cd13a8fdd1
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
 
-    - name: terraform fmt
-      run: terraform fmt -check
-      working-directory: ./terraform
-
+      - name: terraform fmt
+        run: terraform fmt -check
+        working-directory: ./terraform
 
   run-tests:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-    - name: Set up Go
-      uses: actions/setup-go@93397bea11091df50f3d7e59dc26a7711a8bcfbe # v4.1.0
-      with:
-        go-version: '1.20'
+      - name: Set up Go
+        uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32 # v5.0.2
+        with:
+          go-version-file: "go.mod"
 
-    - name: Run tests
-      run: go test -v -skip TestPyPIArtifactsLive ./...
+      - name: Run tests
+        run: go test -v -skip TestPyPIArtifactsLive ./...
 
   build-verify:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-    - name: Set up Go
-      uses: actions/setup-go@93397bea11091df50f3d7e59dc26a7711a8bcfbe # v4.1.0
-      with:
-        go-version: '1.20'
+      - name: Set up Go
+        uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32 # v5.0.2
+        with:
+          go-version-file: "go.mod"
 
-    - name: Build
-      run: make build
+      - name: Build
+        run: make build
 
-    - name: Verify
-      run: make verify
+      - name: Verify
+        run: make verify
 
   run-integration-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
-      - uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
         with:
-          python-version: '3.7'
+          python-version: "3.12"
       - run: pip install -r requirements.txt
         working-directory: ./integration/test_consumer/
       - name: Build the stack
-        run: docker-compose -f docker-compose-integration.yml up -d
+        run: docker compose -f docker-compose-integration.yml up -d
         working-directory: ./integration
       - name: Run consumer python script
         run: python check_kafka_output.py
         working-directory: ./integration/test_consumer
       - name: Output filtered log (full log in artifacts)
-        run: docker-compose -f docker-compose-integration.yml logs feeds | grep -v "Sending package" | grep -v "Processing Package"
+        run: docker compose -f docker-compose-integration.yml logs feeds | grep -v "Sending package" | grep -v "Processing Package"
         working-directory: ./integration/
         if: ${{ always() }}
       - name: Dump logs for archive
-        run: docker-compose -f docker-compose-integration.yml logs feeds > feeds-log.txt
+        run: docker compose -f docker-compose-integration.yml logs feeds > feeds-log.txt
         working-directory: ./integration/
         if: ${{ always() }}
-      - uses: actions/upload-artifact@552bf3722c16e81001aea7db72d8cedf64eb5f68
+      - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874
         with:
           name: package-feeds log
           path: ./integration/feeds-log.txt
