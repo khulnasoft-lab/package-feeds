@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
+        uses: hashicorp/setup-terraform@8c8499e9e34ff34eaf131e608856c105458bc65d
 
       - name: terraform fmt
         run: terraform fmt -check
